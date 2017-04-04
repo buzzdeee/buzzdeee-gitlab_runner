@@ -30,13 +30,20 @@ class gitlab_runner::install (
     require => User[$user],
   }
 
+  file { dirname($install_dir):
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => Common::Mkdir_p[dirname($install_dir)],
+  }
+
   vcsrepo { $install_dir:
     ensure   => 'present',
     provider => 'git',
     source   => $git_url,
     revision => $git_revision,
     user     => $user,
-    require  => Common::Mkdir_p[dirname($install_dir)],
+    require  => File[dirname($install_dir)],
   }
 
   exec { 'install_runner_deps':
