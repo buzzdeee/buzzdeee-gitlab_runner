@@ -42,7 +42,20 @@
 #
 # Copyright 2017 Your name here, unless otherwise noted.
 #
-class gitlab_runner {
+class gitlab_runner (
+  $git_url = $::gitlab_runner::params::git_url,
+  $git_revision = $::gitlab_runner::params::git_revision,
 
+  # The user running the runner
+  $user = $::gitlab_runner::params::user,
+  $group = $::gitlab_runner::params::group,
+  $home = $::gitlab_runner::params::home,
+  $shell = $::gitlab_runner::params::shell,
+  $uid = $::gitlab_runner::params::uid,
+  $gid = $::gitlab_runner::params::gid,
+  $install_dir = $::gitlab_runner::params::install_dir,
+) inherits gitlab_runner::params {
+
+  include gitlab_runner::install
 
 }
