@@ -1,0 +1,15 @@
+{
+  "name": "buzzdeee-gitlab_runner",
+  "version": "0.1.0",
+  "author": "Sebastian Reitenbach",
+  "summary": "A puppet module to manage gitlab runners",
+  "license": "MIT",
+  "source": "https://github.com/buzzdeee/buzzdeee-gitlab_runner.git",
+  "project_page": "https://github.com/buzzdeee/buzzdeee-gitlab_runner",
+  "issues_url": "https://github.com/buzzdeee/buzzdeee-gitlab_runner/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ],
+  "data_provider": null
+}
+
