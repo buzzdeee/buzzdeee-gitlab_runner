@@ -51,7 +51,7 @@ class gitlab_runner::install (
     command     => 'gmake deps',
     environment => [ "PATH=${home}/gocode/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/gocode:${home}/GIT",
-                     "BUILD_PLATFORMS='-os openbsd'", ],
+                     "BUILD_PLATFORMS=-os openbsd", ],
     refreshonly => true,
     timeout     => 2000,
     subscribe   => Vcsrepo[$install_dir],
