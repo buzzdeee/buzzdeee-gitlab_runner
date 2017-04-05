@@ -8,7 +8,7 @@ daemon_user="<%= @user %>"
 
 . /etc/rc.d/rc.subr
 
-pexp="$daemon $daemon_flags.*"
+pexp="${daemon}${daemon_flags:+ ${daemon_flags}}"
 rc_reload=NO
 rc_bg=YES
 
