@@ -60,5 +60,9 @@ class gitlab_runner (
 ) inherits gitlab_runner::params {
 
   include gitlab_runner::install
+  include gitlab_runner::service
+
+  Class['gitlab_runner::install'] ~>
+  Class['gitlab_runner::service']
 
 }
