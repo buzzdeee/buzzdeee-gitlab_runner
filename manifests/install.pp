@@ -46,12 +46,15 @@ class gitlab_runner::install (
     require  => File[dirname($install_dir)],
   }
 
+  $os = downcase($::operatingsystem)
+  $arch = downcase($::processors['isa'])
+
   exec { 'install_runner_deps':
     cwd         => $install_dir,
     command     => 'gmake deps',
     environment => [ "PATH=${home}/gocode/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/gocode:${home}/GIT",
-                     "BUILD_PLATFORMS=-os=openbsd", ],
+                     "BUILD_PLATFORMS=-os=${os} -arch=${arch}", ],
     refreshonly => true,
     timeout     => 2000,
     subscribe   => Vcsrepo[$install_dir],
@@ -61,14 +64,14 @@ class gitlab_runner::install (
     command     => 'gmake build',
     environment => [ "PATH=${home}/gocode/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/gocode:${home}/GIT",
-                     "BUILD_PLATFORMS=-os=openbsd", ],
+                     "BUILD_PLATFORMS=-os=${os} -arch=${arch}", ],
     refreshonly => true,
     timeout     => 2000,
     subscribe   => Exec['install_runner_deps'],
   }
   exec { 'install_runner':
     cwd         => $install_dir,
-    command     => '/usr/bin/install -o root -g bin -m 0755 out/binaries/gitlab-ci-multi-runner /usr/local/bin/gitlab-runner',
+    command     => "/usr/bin/install -o root -g bin -m 0755 out/binaries/gitlab-ci-multi-runner-${os}-${arch} /usr/local/bin/gitlab-runner",
     refreshonly => true,
     subscribe   => Exec['build_runner'],
   }
