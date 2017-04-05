@@ -9,21 +9,25 @@ class gitlab_runner::install (
   # The user running the runner
   $user = $::gitlab_runner::user,
   $group = $::gitlab_runner::group,
+  $groups = $::gitlab_runner::groups,
   $home = $::gitlab_runner::home,
   $shell = $::gitlab_runner::shell,
   $uid = $::gitlab_runner::uid,
   $gid = $::gitlab_runner::gid,
   $install_dir = $::gitlab_runner::install_dir,
+  $logfile = $::gitlab_runner::logfile,
+  $loglevel = $::gitlab_runner::loglevel,
 ) {
 
   group { $group:
     gid => $gid,
   }
   user { $user:
-    home  => $home,
-    shell => $shell,
-    uid   => $uid,
-    gid   => $gid,
+    home   => $home,
+    shell  => $shell,
+    uid    => $uid,
+    gid    => $gid,
+    groups => $groups,
   }
 
   common::mkdir_p { dirname($install_dir):

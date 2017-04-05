@@ -3,13 +3,18 @@
 # This file is managed via Puppet
 
 daemon="/usr/local/bin/gitlab-runner"
-daemon_flags="--log-level 'info' run"
+daemon_flags="--log-level <%= @loglevel %> run"
 daemon_user="<%= @user %>"
 
 . /etc/rc.d/rc.subr
 
 pexp="${daemon}${daemon_flags:+ ${daemon_flags}}"
 rc_reload=NO
-rc_bg=YES
+
+rc_start() {
+        ${rcexec} "${daemon} ${daemon_flags}" \
+                        2>><%= @logfile %> \
+                        >><%= @logfile %> &
+}
 
 rc_cmd $1

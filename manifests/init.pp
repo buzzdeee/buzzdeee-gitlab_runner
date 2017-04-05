@@ -49,11 +49,14 @@ class gitlab_runner (
   # The user running the runner
   $user = $::gitlab_runner::params::user,
   $group = $::gitlab_runner::params::group,
+  $groups = $::gitlab_runner::params::groups,
   $home = $::gitlab_runner::params::home,
   $shell = $::gitlab_runner::params::shell,
   $uid = $::gitlab_runner::params::uid,
   $gid = $::gitlab_runner::params::gid,
   $install_dir = $::gitlab_runner::params::install_dir,
+  $logfile = $::gitlab_runner::params::logfile,
+  $loglevel = $::gitlab_runner::params::loglevel,
 ) inherits gitlab_runner::params {
 
   include gitlab_runner::install
