@@ -12,5 +12,5 @@ class gitlab_runner::params {
   $shell = '/bin/sh'
   $uid = '998'
   $gid = '998'
-  $install_dir = '/home/gitlab_runner/GIT/src/gitlab.com/gitlab-org'
+  $install_dir = '/home/gitlab_runner/GIT/src/gitlab.com/gitlab-org/gitlab-ci-multi-runner'
 }
