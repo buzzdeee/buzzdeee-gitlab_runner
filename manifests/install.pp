@@ -34,6 +34,12 @@ class gitlab_runner::install (
     require => User[$user],
   }
 
+  file { "${home}":
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => User[$user],
+  }
   file { "${home}/builds":
     ensure  => 'directory',
     owner   => $user,
