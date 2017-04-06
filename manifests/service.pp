@@ -5,7 +5,7 @@ class gitlab_runner::service (
 ) {
 
   service { 'gitlab_runner':
-    ensure  => 'running',
-    enabled => true,
+    ensure => 'running',
+    enable => true,
   }
 }
