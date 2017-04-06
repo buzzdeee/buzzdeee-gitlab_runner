@@ -14,6 +14,6 @@ class gitlab_runner::params {
   $uid = '998'
   $gid = '998'
   $install_dir = '/home/gitlab_runner/GIT/src/gitlab.com/gitlab-org/gitlab-ci-multi-runner'
-  $logfile = '/var/www/gitlab/gitlab/log/gitlab-runner.log'
-  $loglevel = 'info'
+  $log_file = '/var/www/gitlab/gitlab/log/gitlab-runner.log'
+  $log_level = 'info'
 }

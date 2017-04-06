@@ -15,8 +15,8 @@ class gitlab_runner::install (
   $uid = $::gitlab_runner::uid,
   $gid = $::gitlab_runner::gid,
   $install_dir = $::gitlab_runner::install_dir,
-  $logfile = $::gitlab_runner::logfile,
-  $loglevel = $::gitlab_runner::loglevel,
+  $log_file = $::gitlab_runner::log_file,
+  $log_level = $::gitlab_runner::log_level,
 ) {
 
   group { $group:
