@@ -6,7 +6,7 @@ class gitlab_runner::config (
   $runner_name = $::gitlab_runner::runner_name,
   $runner_url = $::gitlab_runner::runner_url,
   $runner_token = $::gitlab_runner::runner_token,
-  $runner_executor = $::gitlab_runner::executor,
+  $runner_executor = $::gitlab_runner::runner_executor,
   $home = $::gitlab_runner::home,
   $group = $::gitlab_runner::group,
 ) {
