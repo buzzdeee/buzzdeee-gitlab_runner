@@ -1,0 +1,9 @@
+concurrent = <%= @concurrency %>
+check_interval = <%= @check_interval %>
+
+[[runners]]
+  name = "<%= @runner_name %>"
+  url = "<%= @runner_url %>"
+  token = "<%= @runner_token %>"
+  executor = "<%= @runner_executor %>"
+  [runners.cache]

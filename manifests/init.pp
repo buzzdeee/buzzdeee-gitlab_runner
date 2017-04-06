@@ -57,12 +57,20 @@ class gitlab_runner (
   $install_dir = $::gitlab_runner::params::install_dir,
   $logfile = $::gitlab_runner::params::logfile,
   $loglevel = $::gitlab_runner::params::loglevel,
+  $concurrency = '1',
+  $check_interval = '0',
+  $runner_name = $::fqdn,
+  $runner_url,
+  $runner_token,
+  $runner_executor,
 ) inherits gitlab_runner::params {
 
   include gitlab_runner::install
+  include gitlab_runner::config
   include gitlab_runner::service
 
   Class['gitlab_runner::install'] ~>
+  Class['gitlab_runner::config'] ~>
   Class['gitlab_runner::service']
 
 }
