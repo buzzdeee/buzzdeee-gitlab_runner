@@ -35,7 +35,7 @@
 # Authors
 # -------
 #
-# Author Name <author@domain.com>
+# Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
 #
 # Copyright
 # ---------
@@ -57,6 +57,9 @@ class gitlab_runner (
   $install_dir = $::gitlab_runner::params::install_dir,
   $log_file = $::gitlab_runner::params::log_file,
   $log_level = $::gitlab_runner::params::log_level,
+  $configure_puppetforge_yml = $::gitlab_runner::params::configure_puppetforge_yml,
+  $puppetforge_password = undef,
+  $puppetforge_user = undef,
   $concurrency = '1',
   $check_interval = '0',
   $runner_name = $::fqdn,
