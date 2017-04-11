@@ -25,7 +25,7 @@ class gitlab_runner::config (
   }
 
   if $configure_puppetforge_yml {
-    if !$puppetforge_user || !$puppetforge_password {
+    if !$puppetforge_user or !$puppetforge_password {
       fail("$::module_name must have 'puppetforge_user' and 'puppetforge_password' set")
     }
     file { "${home}/.puppetforge.yml":
