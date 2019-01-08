@@ -14,54 +14,59 @@ class gitlab_runner::install (
   $shell = $::gitlab_runner::shell,
   $uid = $::gitlab_runner::uid,
   $gid = $::gitlab_runner::gid,
-  $install_dir = $::gitlab_runner::install_dir,
   $log_file = $::gitlab_runner::log_file,
   $log_level = $::gitlab_runner::log_level,
 ) {
 
-  common::mkdir_p { "${home}/Go/src/gitlab.com/gitlab-org":
-    require => User[$user],
-  }
-
-  exec { "gitlab_runner_chown_godir":
-    command  => "chown -R ${user} ${home}/Go/",
+  File { "${home}/Go":
+    ensure  => 'directory',
     owner   => $user,
     group   => $group,
     require => User[$user],
   }
 
-  vcsrepo { $install_dir:
-    ensure   => 'present',
-    provider => 'git',
-    source   => $git_url,
-    revision => $git_revision,
-    user     => $user,
-    require  => Common::Mkdir_p["${home}/Go/src/gitlab.com/gitlab-org"],
+  exec { 'go_get_gitlab_runner':
+    user        => $user,
+    cwd         => "${home}",
+    command     => 'go get github.com/buzzdeee/gitlab-runner github.com/docker/go-units github.com/docker/spdystream || true',
+    environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
+                     "GOPATH=${home}/Go", ],
+    timeout     => 2000,
+    creates     => "${home}/Go/src",
+    require => File["${home}/Go"],
   }
 
   exec { 'install_runner_deps':
-    cwd         => "${home}/Go/src/gitlab.com/gitlab-org/gitlab-runner",
+    cwd         => "${home}/Go/src/github.com/buzzdeee/gitlab-runner",
+    user        => $user,
     command     => 'gmake deps',
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/Go", ],
-    refreshonly => true,
     timeout     => 2000,
-    subscribe   => Vcsrepo[$install_dir],
+    require     => Exec['go_get_gitlab_runner'],
   }
+  exec { 'move_docker_deps':
+    command => "mv ${home}/Go/src/github.com/docker ${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/src/github.com",
+    user    => $user,
+    cwd     => "${home}",
+    creates => "${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/src/github.com/docker",
+    require => Exec['install_runner_deps'],
+  }
+
   exec { 'build_runner':
-    cwd         => $install_dir,
+    cwd         => "${home}/Go/src/github.com/buzzdeee/gitlab-runner",
+    user        => $user,
     command     => 'gmake install',
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/Go", ],
-    refreshonly => true,
     timeout     => 2000,
-    subscribe   => Exec['install_runner_deps'],
+    require     => Exec['move_docker_deps'],
   }
   exec { 'install_runner':
-    cwd         => "${home}/Go",
-    command     => "/usr/bin/install -o root -g bin -m 0755 src/gitlab.com/gitlab-org/gitlab-runner/.gopath/bin/gitlab-runner /usr/local/bin/gitlab-runner",
-    refreshonly => true,
-    subscribe   => Exec['build_runner'],
+    cwd     => "${home}/Go",
+    command => "/usr/bin/install -o root -g bin -m 0755 src/github.com/buzzdeee/gitlab-runner/.gopath/bin/gitlab-runner /usr/local/bin/gitlab-runner",
+    creates => '/usr/local/bin/gitlab-runner',
+    require => Exec['build_runner'],
   }
 
   file { "/etc/rc.d/gitlab_runner":
