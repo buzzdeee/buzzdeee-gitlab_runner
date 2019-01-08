@@ -19,23 +19,12 @@ class gitlab_runner::install (
   $log_level = $::gitlab_runner::log_level,
 ) {
 
-  group { $group:
-    gid => $gid,
-  }
-  user { $user:
-    home   => $home,
-    shell  => $shell,
-    uid    => $uid,
-    gid    => $gid,
-    groups => $groups,
-  }
-
-  common::mkdir_p { "${home}/Go/src/gitlab.com/gitlab-org"
+  common::mkdir_p { "${home}/Go/src/gitlab.com/gitlab-org":
     require => User[$user],
   }
 
   exec { "gitlab_runner_chown_godir":
-    command  => "chown -R ${user} ${home}/Go/"
+    command  => "chown -R ${user} ${home}/Go/",
     owner   => $user,
     group   => $group,
     require => User[$user],
