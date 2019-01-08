@@ -30,28 +30,15 @@ class gitlab_runner::install (
     groups => $groups,
   }
 
-  common::mkdir_p { dirname($install_dir):
+  common::mkdir_p { "${home}/Go/src/gitlab.com/gitlab-org"
     require => User[$user],
   }
 
-  file { "${home}":
-    ensure  => 'directory',
+  exec { "gitlab_runner_chown_godir":
+    command  => "chown -R ${user} ${home}/Go/"
     owner   => $user,
     group   => $group,
     require => User[$user],
-  }
-  file { "${home}/builds":
-    ensure  => 'directory',
-    owner   => $user,
-    group   => $group,
-    require => User[$user],
-  }
-
-  file { dirname($install_dir):
-    ensure  => 'directory',
-    owner   => $user,
-    group   => $group,
-    require => Common::Mkdir_p[dirname($install_dir)],
   }
 
   vcsrepo { $install_dir:
@@ -60,35 +47,30 @@ class gitlab_runner::install (
     source   => $git_url,
     revision => $git_revision,
     user     => $user,
-    require  => File[dirname($install_dir)],
+    require  => Common::Mkdir_p["${home}/Go/src/gitlab.com/gitlab-org"],
   }
 
-  $os = downcase($::operatingsystem)
-  $arch = downcase($::processors['isa'])
-
   exec { 'install_runner_deps':
-    cwd         => $install_dir,
+    cwd         => "${home}/Go/src/gitlab.com/gitlab-org/gitlab-runner",
     command     => 'gmake deps',
-    environment => [ "PATH=${home}/gocode/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
-                     "GOPATH=${home}/gocode:${home}/GIT",
-                     "BUILD_PLATFORMS=-os=${os} -arch=${arch}", ],
+    environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
+                     "GOPATH=${home}/Go", ],
     refreshonly => true,
     timeout     => 2000,
     subscribe   => Vcsrepo[$install_dir],
   }
   exec { 'build_runner':
     cwd         => $install_dir,
-    command     => 'gmake build',
-    environment => [ "PATH=${home}/gocode/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
-                     "GOPATH=${home}/gocode:${home}/GIT",
-                     "BUILD_PLATFORMS=-os=${os} -arch=${arch}", ],
+    command     => 'gmake install',
+    environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
+                     "GOPATH=${home}/Go", ],
     refreshonly => true,
     timeout     => 2000,
     subscribe   => Exec['install_runner_deps'],
   }
   exec { 'install_runner':
-    cwd         => $install_dir,
-    command     => "/usr/bin/install -o root -g bin -m 0755 out/binaries/gitlab-ci-multi-runner-${os}-${arch} /usr/local/bin/gitlab-runner",
+    cwd         => "${home}/Go",
+    command     => "/usr/bin/install -o root -g bin -m 0755 src/gitlab.com/gitlab-org/gitlab-runner/.gopath/bin/gitlab-runner /usr/local/bin/gitlab-runner",
     refreshonly => true,
     subscribe   => Exec['build_runner'],
   }
