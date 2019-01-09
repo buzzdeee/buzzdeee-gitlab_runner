@@ -60,6 +60,7 @@ class gitlab_runner::install (
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/Go", ],
     timeout     => 2000,
+    creates => "${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/bin/gitlab-runner",
     require     => Exec['move_docker_deps'],
   }
   exec { 'install_runner':

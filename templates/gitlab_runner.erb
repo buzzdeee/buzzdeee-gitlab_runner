@@ -17,4 +17,8 @@ rc_start() {
                         >><%= @log_file %> &
 }
 
+rc_pre() {
+	install -d -o <%= @user %> `dirname <%= @log_file %>`
+}
+
 rc_cmd $1
