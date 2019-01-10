@@ -16,8 +16,4 @@ rc_start() {
                         2>&1 | logger -t gitlab-runner -i -p <%= @log_facility %>.<%= @log_level %> &
 }
 
-rc_pre() {
-	install -d -o <%= @user %> `dirname <%= @log_file %>`
-}
-
 rc_cmd $1

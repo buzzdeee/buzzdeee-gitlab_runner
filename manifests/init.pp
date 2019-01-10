@@ -55,7 +55,6 @@ class gitlab_runner (
   $uid = $::gitlab_runner::params::uid,
   $gid = $::gitlab_runner::params::gid,
   $install_dir = $::gitlab_runner::params::install_dir,
-  $log_file = $::gitlab_runner::params::log_file,
   $log_level = $::gitlab_runner::params::log_level,
   $log_facility = $::gitlab_runner::params::log_facility,
   $configure_puppetforge_yml = $::gitlab_runner::params::configure_puppetforge_yml,

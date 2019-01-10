@@ -14,7 +14,6 @@ class gitlab_runner::install (
   $shell = $::gitlab_runner::shell,
   $uid = $::gitlab_runner::uid,
   $gid = $::gitlab_runner::gid,
-  $log_file = $::gitlab_runner::log_file,
   $log_level = $::gitlab_runner::log_level,
   $log_facility = $::gitlab_runner::log_facility,
 ) {
