@@ -57,6 +57,7 @@ class gitlab_runner (
   $install_dir = $::gitlab_runner::params::install_dir,
   $log_file = $::gitlab_runner::params::log_file,
   $log_level = $::gitlab_runner::params::log_level,
+  $log_facility = $::gitlab_runner::params::log_facility,
   $configure_puppetforge_yml = $::gitlab_runner::params::configure_puppetforge_yml,
   $puppetforge_password = undef,
   $puppetforge_user = undef,

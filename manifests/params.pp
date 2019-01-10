@@ -16,6 +16,7 @@ class gitlab_runner::params {
   $install_dir = '/home/_gitlab_runner/GIT/src/gitlab.com/gitlab-org/gitlab-ci-multi-runner'
   $log_file = '/var/log/gitlab/gitlab-runner.log'
   $log_level = 'info'
+  $log_facility = 'local3'
 
   $configure_puppetforge_yml = false
 
