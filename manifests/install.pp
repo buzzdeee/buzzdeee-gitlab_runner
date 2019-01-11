@@ -24,16 +24,30 @@ class gitlab_runner::install (
     group   => $group,
     require => User[$user],
   }
+  File { "${home}/Go/src":
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => User[$user],
+  }
+  File { "${home}/Go/src/github.com":
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => User[$user],
+  }
+  File { "${home}/Go/src/github.com/buzzdeee":
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => User[$user],
+  }
 
-  exec { 'go_get_gitlab_runner':
-    user        => $user,
-    cwd         => "${home}",
-    command     => 'go get github.com/buzzdeee/gitlab-runner',
-    environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
-                     "GOPATH=${home}/Go", ],
-    timeout     => 2000,
-    creates     => "${home}/Go/src",
-    require => File["${home}/Go"],
+  vcsrepo { "${home}/Go/src/github.com/buzzdeee/gitlab-runner":
+    source   => 'https://github.com/buzzdeee/gitlab-runner.git',
+    user     => $user,
+    provider => 'git',
+    require  => File["${home}/Go/src/github.com/buzzdeee"],
   }
 
   exec { 'install_runner_deps':
@@ -44,7 +58,7 @@ class gitlab_runner::install (
                      "GOPATH=${home}/Go", ],
     creates     => "${home}/Go/src/gitlab.com/gitlab-org/gitlab-runner/.gopath/src/gitlab.com/gitlab-org",
     timeout     => 2000,
-    require     => Exec['go_get_gitlab_runner'],
+    require     => Vcsrepo["${home}/Go/src/github.com/buzzdeee/gitlab-runner"],
   }
   exec { 'build_runner':
     cwd         => "${home}/Go/src/github.com/buzzdeee/gitlab-runner",
@@ -54,7 +68,7 @@ class gitlab_runner::install (
                      "GOPATH=${home}/Go", ],
     timeout     => 2000,
     creates => "${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/bin/gitlab-runner",
-    require     => Exec['go_get_gitlab_runner'],
+    require     => Exec['install_runner_deps'],
   }
   exec { 'install_runner':
     cwd     => "${home}/Go",
