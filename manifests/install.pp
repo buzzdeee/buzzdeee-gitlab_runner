@@ -42,6 +42,7 @@ class gitlab_runner::install (
     command     => 'gmake deps',
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/Go", ],
+    creates     => "${home}/Go/src/gitlab.com/gitlab-org/gitlab-runner/.gopath/src/gitlab.com/gitlab-org",
     timeout     => 2000,
     require     => Exec['go_get_gitlab_runner'],
   }
@@ -53,7 +54,7 @@ class gitlab_runner::install (
                      "GOPATH=${home}/Go", ],
     timeout     => 2000,
     creates => "${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/bin/gitlab-runner",
-    require     => Exec['move_docker_deps'],
+    require     => Exec['go_get_gitlab_runner'],
   }
   exec { 'install_runner':
     cwd     => "${home}/Go",
