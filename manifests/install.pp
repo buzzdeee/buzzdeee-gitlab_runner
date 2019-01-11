@@ -28,7 +28,7 @@ class gitlab_runner::install (
   exec { 'go_get_gitlab_runner':
     user        => $user,
     cwd         => "${home}",
-    command     => 'go get github.com/buzzdeee/gitlab-runner github.com/docker/go-units github.com/docker/spdystream || true',
+    command     => 'go get github.com/buzzdeee/gitlab-runner',
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/Go", ],
     timeout     => 2000,
@@ -45,14 +45,6 @@ class gitlab_runner::install (
     timeout     => 2000,
     require     => Exec['go_get_gitlab_runner'],
   }
-  exec { 'move_docker_deps':
-    command => "mv ${home}/Go/src/github.com/docker ${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/src/github.com",
-    user    => $user,
-    cwd     => "${home}",
-    creates => "${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/src/github.com/docker",
-    require => Exec['install_runner_deps'],
-  }
-
   exec { 'build_runner':
     cwd         => "${home}/Go/src/github.com/buzzdeee/gitlab-runner",
     user        => $user,
