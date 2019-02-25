@@ -56,7 +56,7 @@ class gitlab_runner::install (
     command     => 'gmake deps',
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/Go", ],
-    creates     => "${home}/Go/src/gitlab.com/gitlab-org/gitlab-runner/.gopath/src/gitlab.com/gitlab-org",
+    creates     => "${home}/Go/src/github.com/buzzdeee/gitlab-runner/.gopath/bin/mockery",
     timeout     => 2000,
     require     => Vcsrepo["${home}/Go/src/github.com/buzzdeee/gitlab-runner"],
   }
