@@ -45,6 +45,19 @@ class gitlab_runner::install (
     group   => $group,
     require => User[$user],
   }
+  File { "${home}/.cache":
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => User[$user],
+  }
+  File { "${home}/.cache/go-build":
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => User[$user],
+  }
+
 
   vcsrepo { "${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}":
     source   => $git_url,
@@ -58,7 +71,7 @@ class gitlab_runner::install (
     user        => $user,
     command     => 'gmake deps',
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
-                     "GOPATH=${home}/Go", ],
+                     "GOPATH=${home}/Go", "GOCACHE=${home}/.cache/go-build"],
     creates     => "${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}/.gopath/bin/mockery",
     timeout     => 2000,
     require     => Vcsrepo["${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}"],
