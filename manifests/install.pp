@@ -72,23 +72,27 @@ class gitlab_runner::install (
     command     => 'gmake deps',
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
                      "GOPATH=${home}/Go", "GOCACHE=${home}/.cache/go-build"],
-    creates     => "${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}/.gopath/bin/mockery",
+    creates     => "${home}/Go/bin/gox",
     timeout     => 2000,
     require     => Vcsrepo["${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}"],
   }
+
+  $arch = $facts['os']['architecture']
+  $os = inline_template('<%= @kernel.downcase %>')
+
   exec { 'build_runner':
     cwd         => "${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}",
     user        => $user,
-    command     => 'gmake install',
+    command     => "gmake build_all BUILD_PLATFORMS='-os=${os} -arch=${arch}'",
     environment => [ "PATH=${home}/Go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11R6/bin:/usr/local/sbin",
-                     "GOPATH=${home}/Go", ],
+                     "GOPATH=${home}/Go", "GOCACHE=${home}/.cache/go-build"],
     timeout     => 2000,
-    creates => "${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}/.gopath/bin/gitlab-runner",
+    creates => "${home}/Go/src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}/out/binaries/gitlab-runner-${os}-${arch}",
     require     => Exec['install_runner_deps'],
   }
   exec { 'install_runner':
     cwd     => "${home}/Go",
-    command => "/usr/bin/install -o root -g bin -m 0755 src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}/.gopath/bin/gitlab-runner /usr/local/bin/gitlab-runner",
+    command => "/usr/bin/install -o root -g bin -m 0755 src/${pathelems[2]}/${pathelems[3]}/${pathelems[4]}/out/binaries/gitlab-runner-${os}-${arch} /usr/local/bin/gitlab-runner",
     creates => '/usr/local/bin/gitlab-runner',
     require => Exec['build_runner'],
   }
