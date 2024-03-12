@@ -62,7 +62,7 @@ class gitlab_runner (
   $puppetforge_user = undef,
   $concurrency = '1',
   $check_interval = '0',
-  $runner_name = $::fqdn,
+  $runner_name = $facts['networking']['fqdn'],
   $runner_url,
   $runner_token,
   $runner_executor,
